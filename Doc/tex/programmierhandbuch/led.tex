@@ -1,0 +1,67 @@
+\subsection{LED}
+    Als LED kommt eine \textit{HV-5RGBXX} zum Einsatz. Diese wird über drei Pins
+    mit jeweiligen 220Ohm Widerstand an den \textit{Atmega168} angeschlossen
+    (Siehe \ref{schaltplan}).
+
+\subsubsection{Farbe und Helligkeit}
+    Durch die drei Pins die die Grundfarben Rot, Grün und Blau repräsentieren,
+    lassen sich über additive Farbmischung unterschiedliche Farben einstellen.
+    \\
+    Um Intensitäten einstellen zu können wird ein puls-weiten-modulations (PWM)
+    Signal pro Pin erzeugt. Hierfür wird der Hardware Timer \textit{TIMER2} des
+    \textit{Atmega168} verwendet. Da der Timer jedoch nur zwei Ausgänge bestitz, kann
+    kein Hardware PWM Signal, wie zum Beispiel \textit{Fast PWM} verwendet werden,
+    sodass ein \textit{Soft-PWM} implementiert wurde.
+    
+    \lstinputlisting[caption=led\_on,firstline=49, lastline=64]{../led.c}
+    Um die LED einzuschalten wird die \texttt{led\_on} Funktion mit den
+    jeweiligen Parametern aufgerufen. Zunächst werden die
+    Pulsweiten für die einzelnen Farbkanäle berechnet. Diese sagen aus, wie 
+    lange der Farbkanal pro Periode eingeschaltet ist. In der Formel wird direkt
+    die Helligkeit mit der Farbintensität verrechnet.
+
+    \begin{displaymath}
+        Pulsweite = \frac{Helligkeit \cdot Farbintensität}{Farbintensität_{max} \cdot Periodenschritte_{max}}
+    \end{displaymath}
+    Des weiteren wird der Timer gestartet, sodass dieser mit einer Frequenz von
+    $3906Hz$ bzw. alle $256\mu{s}$ die \textit{ISR} ausführt.
+    \newpage
+    \lstinputlisting[caption=PWM ISR,firstline=75, lastline=115]{../led.c}
+    In dieser \textit{ISR} wird der Zähler \texttt{pwm\_step} pro Aufruf inkrementiert und 
+    mit den jeweiligen Pulsweiten der Farbkanäle verglichen.
+    Liegt der Zähler unterhalb einer Pulsweite, wird der entsprechende Farbkanal
+    eingeschaltet. Umgekehrt wird der Farbkanal ausgeschaltet sobald der Zähler
+    oberhalb der Pulsweite liegt. Sobald der Zähler die maximalen Periodenschritte
+    erreicht hat, wird dieser auf null zurückgesetzt.
+    Als maximal Periodenschritte wurde zehn gewählt. Daraus folgt eine Periodendauer
+    von ca. 2ms, welches zu schnell für das menschliche Auge ist und somit 
+    als kontinuierliches Licht wahrgenommen wird.
+    \\\\
+    Auch wenn die \textit{TIMER2\_COMPA\_vect\ ISR} nicht rechenintensiv ist, könnte sie verkürzt
+    werden, sodass die CPU weniger blockiert. Dazu könnte die Logik in die
+    Hauptschleife ausgelagert werden und \texttt{OCR2A} auf die maximale
+    Periodenschritte gesetzt werden. Ein vergleich des Periodenschrittes mit
+    \texttt{TCNT2} wäre dann äquivalent. Der Vorteil wäre hierbei, dass die
+    zeitlich kürzere \textit{ISR} die CPU weniger blockiert.
+    Ein jedoch großer Nachteil könnte sein,
+    dass die Farben bei hoher CPU Auslastung driften, da nicht genug CPU Zeit
+    in der Hauptschleife vorhanden ist um die PWM Signale stabil zu halten.
+    \\
+    Ein weiterer Ansatz wäre es, zwei hardware Timer zu benutzen und
+    \textit{Fast-PWM} einzusetzen. Dabei würde zum Beispiel ein Timer zwei
+    Farbkanäle und der andere einen Farbkanal steuern.
+    Der Vorteil an dieser Lösung wäre, dass weniger Overhead durch das aufrufen
+    der \textit{ISR} auftreten würde. Jedoch werden auch zwei der drei hardware
+    Timer des \textit{Atmega168} dafür beansprucht.
+
+\subsubsection{Blinken}
+    Um ein Blinken der LED zu realisieren wird der hardware Timer \textit{TIMER1}
+    eingesetzt und so konfiguriert, dass seine \textit{TIMER1\_COMPA\_vect ISR}
+    ca. mit 4Hz, also vier mal in einer Sekunde blinkt.
+    \lstinputlisting[caption=Blink ISR,firstline=42, lastline=47]{../led.c}
+    Dabei toggelt die \textit{ISR} das \texttt{led\_blink\_state} Flag und
+    manipuliert somit die \\\textit{TIMER2\_COMPA\_vect\ ISR},
+    sodass diese die LED komplett ausschaltet wenn das Flag nicht gesetzt ist.
+    \lstinputlisting[caption=Blinkbedingung,firstline=82, lastline=85]{../led.c}
+    
+

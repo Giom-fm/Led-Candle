@@ -1,0 +1,53 @@
+\section{Problemanalyse}
+    \subsection{Betriebsmodi}
+
+        \subsubsection{Laternenmodus}
+            Sobald die LED Kerze bewegt wird, wird in den Laternenmodus
+            geschaltet werden. Die Kerze leuchtet solange bis keine Bewegung
+            mehr detektiert wurde und die Abschaltverzögerung abgelaufen ist.
+            Es muss jedoch auch manuell möglich sein, die Kerze abzuschalten.
+
+        \subsubsection{Dekorationsmodus}
+            Die Kerze wird manuell in den Dekorationsmodus geschaltet.
+            In diesem Modus leuchtet die LED durchgehend bis die
+            Abschaltverzögerung die Kerze abschaltet. Wie im
+            Laternenmodus soll es möglich sein, die Kerze manuell auszuschalten.
+
+
+    \subsection{Konfiguration}
+        Da die Kerze ausschließlich über Bewegungen konfigurierbar sein soll,
+        wird eine Bewegungssteuerung benötigt.
+        Dabei wird zwischen Bewegungen entlang einer Achse und Bewegungen
+        um eine Achse unterschieden.\\
+        Ein Accelerometer kann dabei nur Bewegungen entlang einer Achse,
+        wie zum Beispiel das verschieben eines Körpers, messen.
+        Dagegen kann ein Gyroskop nur Bewegungen um eine Achse,
+        wie zum Beispiel das Rotieren eines Körpers, messen.
+        Durch die Kombination der beiden Sensoren erhält man eine
+        inertiale Messeinheit und kann somit jede Bewegung eines Körpers
+        detektieren. Falls die Startposition sowie Startorientierung bekannt sind,
+        kann damit die Position sowie die Orientierung des Körpers im 
+        Raum bestimmt werden.
+        Somit können Bewegungen durch einen Sensor erkannt werden und als
+        Steuerung der Kerze benutzt werden.
+
+    \subsection{Abschaltverzögerung}
+        Damit es möglich ist, dass die Kerze sich automatisch nach einer
+        konfigurierten Abschaltverzögerung abschaltet, ist es erforderlich,
+        dass die vergangene Zeit gemessen werden kann.
+
+    \subsection{Helligkeit und Farbe}
+        Über Bewegungssteuerung soll es möglich sein, unter anderem die
+        Helligkeit und Farbe einzustellen.
+        Dafür wird ein puls-weiten-modulations Verfahren benötigt um die
+        einzelnen Farbkanäle der RGB-LED anzusteuern.
+
+    \subsection{Debugging}
+        Es muss möglich sein das Programm zu Debuggen. Dazu wird ein Modul
+        benötigt, dass Debugausgaben an einem Computer senden kann.
+
+        
+
+
+
+

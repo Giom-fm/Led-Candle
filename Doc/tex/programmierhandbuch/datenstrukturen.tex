@@ -1,0 +1,53 @@
+\subsection{Datenstrukturen}\label{Datenstrukturen}
+    Alle Datenstrukturen die für das Programm benötigt werden, befinden sich
+    in der \textit{types.h} Datei.
+
+    \subsubsection{State}
+        Die \textit{State} Datenstruktur repräsentiert den aktuellen Zustand
+        der Zustandsmaschine (Siehe \ref{Zustandsmaschine}).
+        \lstinputlisting[caption=State Enum,firstline=11, lastline=21]{../types.h}
+
+
+    \subsubsection{Delay}
+        Die \textit{Delay} Datenstruktur beschreibt die Abschaltverzögerung und
+        speichert die Minuten sowie die Stunden nachdem die Kerze sich
+        abschalten soll.
+        \lstinputlisting[caption=Delay Struct,firstline=23, lastline=29]{../types.h}
+
+
+    \subsubsection{Color}
+        Die \textit{Color} Datenstruktur steht für die LED Farbe und
+        speichert die drei Farbkanäle Rot, Grün und Blau. Der Maximalwert
+        eines Farbkanals ist 100.
+        \lstinputlisting[caption=Color Struct,firstline=31, lastline=38]{../types.h}
+
+
+    \subsubsection{Config}
+        Die \textit{Config} Datenstruktur repräsentiert alle
+        Konfigurationsparameter der Kerze und ist aus den anderen oben genannten
+        Datenstrukturen kompositioniert.
+        Dabei wird zwischen der Laternen- und der Dekorationsabschaltverzögerung
+        unterschieden. Zusätzlich hält die Datenstruktur noch die Helligkeit
+        deren Maximalwert auch hier 100 beträgt.
+        \lstinputlisting[caption=Config Struct,firstline=40, lastline=48]{../types.h}
+
+    
+    \subsubsection{setup\_colors}
+        Das \textit{setup\_colors} Array speichert die Farbe die die Kerze im
+        \textit{SETUP\_DELAY} Zustand annehmen soll.
+        \lstinputlisting[caption=setup\_colors Array,firstline=42, lastline=49]{../main.c}
+
+    \subsubsection{lantern\_delays}
+        Das \textit{lantern\_delays} Array speichert alle Abschaltverzögerungen für
+        den Laternenmodus zwischen denen der Benutzer wählen kann.
+        \lstinputlisting[caption=deco\_delays Array,firstline=51, lastline=58]{../main.c}
+
+    \subsubsection{deco\_delays}
+        Das \textit{deco\_delays} Array speichert alle Abschaltverzögerungen für
+        den Dekorationsmodus zwischen denen der Benutzer wählen kann.
+        \lstinputlisting[caption=deco\_delays Array,firstline=60, lastline=67]{../main.c}
+
+    \subsubsection{led\_colors}
+        Das \textit{led\_colors} Array speichert alle Farben zwischen denen der
+        Benutzer wählen kann.
+        \lstinputlisting[caption=led\_colors Array,firstline=69, lastline=76]{../main.c}

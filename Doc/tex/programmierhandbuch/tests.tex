@@ -1,0 +1,71 @@
+\section{Programmtests}
+    Aufgrund der niedrigen Komplexität des Programmes wurden keine automatischen
+    Tests geschrieben. Die Tests wurden daher \textit{per Hand} ausgeführt.
+    Dabei wurden alle Funktionen sowohl einzeln als auch im Gesamten getestet 
+    und die Ergebnisse über die Debugausgabe überprüft. Zusätzlich wurde 
+    die Kerze von Dritten getestet um Betriebsblindheit auszuschließen.
+
+    \subsection{Durchgeführte Tests}
+        Alle ausgeführten Tests wurden mit einer zurückgesetzten Kerze getestet,
+        sodass sich die Tests gegenseiten nicht beeinflussen.
+
+        \begin{center}
+            \begin{longtable}{| p{0.4\textwidth} | p{0.3\textwidth} | p{0.3\textwidth} |}
+                \hline
+                Testfall & Erwartetes Ergebnis & Erzieltes Ergebnis \\
+                \hline
+
+                Starten des Laternenmodus durch Schütteln der Kerze. &
+                Die Kerze sollte in der Standardfarbe (Orange), Standardhelligkeit (50\%) leuchten
+                und nach der Standardabschaltverzögerung (1 min) abschalten. &
+                Die Kerze leuchtet mit ihren Standartwerten und schaltet sich
+                nach der Standardabschaltverzögerung ab. \\
+                \hline
+
+                Starten des Dekorationsmodus durch nach hinten Kippen der Kerze.&
+                Die Kerze sollte in der Standardfarbe (Orange), Standardhelligkeit (50\%) leuchten
+                und nach der Standardabschaltverzögerung (30 min) abschalten. &
+                Die Kerze leuchtet mit ihren Standartwerten und schaltet sich
+                nach der Standardabschaltverzögerung ab. \\
+                \hline
+
+                Zurücksetzen der Abschaltverzögerung durch Bewegung im Laternenmodus.
+                Dafür wird die Kerze in Laternenmodus versetzt und nach 30 Sekunden
+                geschüttelt. &
+                Die Kerze sollte nach insgesamt einer Minute und 30 Sekunden nach Testbeginn
+                sich ausschalten. &
+                Die Kerze schaltet sich nach 1 Minute und 30 Sekunden aus.\\
+                \hline
+
+                Ausschalten der Kerze im Laternenmodus. Dafür wird die Kerze
+                in den Laternenmodus versetzt und anschließend auf dem Kopf gedreht.&
+                Die Kerze sollte sich ausschalten.&
+                Die Kerze schaltet sich aus.\\
+                \hline
+
+                Ausschalten der Kerze im Dekorationsmodus. Dafür wird die Kerze
+                in den Dekorationsmodus versetzt und anschließend auf dem Kopf gedreht.&
+                Die Kerze sollte sich ausschalten.&
+                Die Kerze schaltet sich aus.\\
+                \hline
+
+                Folgende Parameter werden durch den Konfigurationsmodus gesetzt.
+                \begin{itemize}
+                    \item Abschaltverzögerung: 3 min
+                    \item Farbe: Pink
+                    \item Helligkeit: 100\%
+                \end{itemize}&
+                Die Kerze soll in den konfigurierten Parametern leuchten und nach
+                der konfigurierten Abschaltverzögerung sich abschalten.&
+                Die Kerze leuchtet mit den konfigurierten Parametern und
+                schaltet sich nach der konfigurierten Abschaltverzögerung ab.\\
+                \hline
+
+                Kombination der Tests. Die Tests werden ohne Zurücksetze
+                hintereinander ausgeführt.&
+                Die Kerze soll sich in den Tests konsistent und deterministisch verhalten&
+                Die Kerze verhält sich in den Tests konsistent und deterministisch\\
+                \hline
+
+            \end{longtable}
+        \end{center}

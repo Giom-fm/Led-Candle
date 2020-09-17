@@ -1,0 +1,115 @@
+\subsection{Bewegungssteuerung}
+  Zum detektieren von Bewegungen wird ein \textit{MPU6050} eingesetzt.
+  Dieser Sensor beinhaltet ein drei-Achsen Gyroskop, ein drei-Achsen 
+  Accelerometer und ein Temperatursensor.
+
+    \subsubsection{Sensorwahl}
+      Da die konstante Erdbeschleunigung von $1g = 9,81\frac{m}{s}$
+      die Kerze kontinuierlich in Richtung Erdmittelpunkt beschleunigt,
+      reicht das drei-Achsen Accelerometer aus, um die genaue
+      Neigung der Kerze zu bestimmen. Zu beachten ist jedoch, dass nur
+      Neigungen um die X- und Y-Achsen detektiert werden können.
+      Rotationen um die Z-Achse werden von dem Accelerometer nicht
+      wahrgenommen da die Z-Achse auf den beiden anderen Achsen steht.
+      \\\\
+      Alternativ könnte auch das Gyroskop verwendet werden. Darüber lassen
+      sich Drehwinkel um die Achsen messen. Da jedoch ein Gyroskop
+      $\frac{Winkel}{Zeit}$ als Einheit hat, müsste integriert und die Werte
+      aufsummiert werden. Die wahrscheinlichkeit, dass der Sensorwert dabei
+      driftet ist sehr hoch und wird somit nicht als Lösung betrachtet.
+
+
+    \subsubsection{Achsenorentierung}\label{Achsenorentierung}
+      Zu beachten ist, dass der Sensor nicht über seine Pins im
+      Breakout Board befestigt wird sondern flach auf dem Board
+      festgeklebt wird. Daraus ergibt sich folgende Orientierung der
+      Achsen.
+      \begin{description}       
+          \item[Z-Achse] Senkrechte Achse
+          \item[Y-Achse] Horizontale Achse
+          \item[X-Achse] Senkrecht auf beiden anderen Achsen
+      \end{description}
+
+
+
+    \subsubsection{Kommunikation}
+      Die Sensordaten werden über ein $TWI$ Bus an den Mikrocontroller
+      übertragen.
+
+      \paragraph{Senden}
+        Als Beispiel eines Sendevorgangs wird die Konfiguration des
+        Accelerometers benutzt.
+        \lstinputlisting[caption=TWI Sendevorgang,firstline=26, lastline=39]{../mpu6050.c}
+        Zunächst wird das Startsignal auf den Bus gelegt und gewartet bis der
+        Bus frei ist. Sobald die Kondition eintritt, wird die Schreibadresse des
+        \textit{MPU6050} gesetzt. Als nächstes wird die Registeradresse in die
+        die Daten geschrieben werden sollen auf den Bus geschrieben und auf das
+        \textit{ACK} gewartet. War dies erfolgreich, können die eigentlichen
+        Daten auf den Bus geschrieben werden und das Stoppsignal gesendet werden.
+
+
+      \paragraph{Empfangen}
+        Als Beispiel für das Empfangen von Daten wird das auslesen des
+        Accelerometers benutzt.
+        \lstinputlisting[caption=TWI Empfangsvorgang,firstline=113, lastline=132]{../mpu6050.c}
+        Zunächst wird wie beim Senden das Startsignal auf den Bus gelegt,
+        die Schreibadresse des \textit{MPU6050} gesetzt und das zu lesenden
+        Register gesendet. Nun erfolgt ein wiederholter Start mit der Leseadresse
+        des \textit{MPU6050}. Durch \texttt{twi\_read\_ack} wird das erste Byte
+        ausgelesen. Der \textit{MPU6050} erhöht nach dem Empfangen des \textit{ACK}
+        automatisch die Registeradresse, sodass mit \texttt{twi\_read\_nack}
+        das zweite Byte ausgelesen werden kann. Nach dem zweiten Byte wird
+        jedoch ein \textit{NACK} gesendet, welches dem \textit{MPU6050} signalisiert,
+        dass keine Daten mehr erwartet werden. Nach dem Stoppsignal ist die
+        Kommunikation beendet.
+
+
+    \subsubsection{Kalibrierung}
+      Durch die Kalibrierung wird der \textit{null Fehler} kompensiert und damit 
+      gewährleistet, dass der Sensor kalibrierte Daten liefert.
+      \\
+      Ein \textit{null Fehler} entsteht dadurch, dass ein Sensor einen Wert
+      liefert der ungleich null ist, obwohl der Sensor sich in Ruhelage
+      befindet. Da der Fehler sich selbst bei  baugleichen Sensoren
+      unterscheidet, muss für jeden Sensor eine einmalige Kalibrierung erfolgen.
+      \\\\
+      Über die \texttt{mpu6050\_calibrate} Funktion werden die Werte gemittelt
+      und dann über die \texttt{debug\_print} Funktion ausgegeben.
+      Dazu wird zunächst der Sensor waagerecht auf eine plane Fläche gelegt,
+      sodass die Z-Achse nach oben Zeigt und die Funktion ausgeführt.
+      Nun wir der Z-Achsenwert notiert, das Verfahren für alle Achsen
+      wiederholt und der entsprechende Achsenwert notiert.
+      \\
+      Um den eigentlichen Versatz zu berechnen werden folgende Formeln verwendet.
+      $$  Versatz_X = 0 - Achsenwert_X $$
+      $$  Versatz_Y = 0 - Achsenwert_Y $$
+      $$  Versatz_Z = 1 - Achsenwert_Z $$
+      Für den benutzen Sensor ergeben sich somit folgende Versätze.
+      \begin{center}
+        \begin{tabular}{| c | c |}
+            \hline
+            Achse & Versatz \\
+            \hline
+            X & $-0.035939$ \\
+            \hline
+            Y & $0.010786$ \\
+            \hline
+            Z & $0.187407$ \\
+            \hline
+        \end{tabular}
+      \end{center}
+      Der Versatz muss nun auf jeden entsprechenden Wert hinzuaddiert werden um
+      den \textit{null Fehler} zu kompensieren.
+      \lstinputlisting[caption=Nullfehler Kompension,firstline=136, lastline=138]{../mpu6050.c}
+
+
+    \subsubsection{Digitale Tiefpassfilterung}
+      Um dem Rauschen des Sensors entgegen zu wirken, wird die interne digitale
+      Tiefpassfilterung des \textit{MPU6050} benutzt. Dabei wird der Tiefpassfilter
+      auf $5Hz$ gestellt um hochfrequentes Rauschen zu filtern.
+
+ 
+
+
+
+      

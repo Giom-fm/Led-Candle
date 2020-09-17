@@ -1,0 +1,43 @@
+\subsection{Stromsparmaßnahmen}
+    Da die LED Kerze über einen Akku betrieben werden soll, soll möglichst viel
+    Strom gespart werden. Dabei muss abgewogen werden, was wirklich Sinnvoll ist
+    und was in Relation zu anderen großen Stromverbrauchern wie der LED nur
+    marginale Verbesserungen mit sich bringt.
+
+    \subsubsection{MPU6050}
+        Da von dem Sensor nur das Accelerometer verwendet wird, werden das
+        Gyroskop sowie der Temperatursensor deaktiviert. Zusätzlich wird die
+        Samplerate auf 32Hz runter gesetzt.
+
+    \subsubsection{Atmega168}
+        Sobald die LED nicht leuchtet, die Zustandsmaschine sich somit im
+        \textit{LED\_OFF} Zustand befindet, wird der Mikrocontroller schlafen
+        gelegt. Dabei wird dieser in den \textit{Standbymode} versetzt, sodass
+        die Stromaufnahe von ca. $8.5mA$ auf ca. $2.5mA$ des Gesamtsystems zurück
+        geht. Dies ist eine Reduktion von $70\%$ und wird die Akkulaufzeit
+        verlängern.
+        Dies geschieht über den Aufruf der \texttt{sleep} Funktion.
+
+        \lstinputlisting[caption=sleep,firstline=102, lastline=112]{../main.c}
+        Dabei werden zunächst alle Interrupts gesperrt, sodass es zu keinen
+        \textit{Race Conditions} kommen kann. Ein Beispiel für solch eine
+        \textit{Race Condition} wäre, dass die \textit{ISR} die externen
+        interrupts deaktiviert, die CPU sich aber im nächsten Moment schlafen legt
+        und somit nicht wieder aufwachen kann.\\
+        Als nächstes wird das externe Interrupt maskiert, sodass der
+        Mikrocontroller nur aufwacht, sobald am \textit{INT0} Pin eine
+        steigende Flanke anliegt.
+        Durch das Ausführen der \texttt{sei} Funktion werden alle Interrupts wieder aktiviert.
+        Zusätzlich wird der nächste Funktionsaufruf unterbrechungsfrei garantiert.
+        Somit kann es zu keinen \textit{Race Conditions} mehr kommen und der
+        Mikrocontroller kann durch \texttt{sleep\_cpu} schlafen gelegt werden.
+
+        \lstinputlisting[caption=Aufwach ISR,firstline=130, lastline=136]{../main.c}
+        Der \textit{Standbymode} wurde dabei ausgewählt, da aus diesem
+        der Mikrocontroller in nur sechs Taktzyklen wieder aufwachen kann.
+        Das Aufwachen passiert dabei über das \textit{INT0} Interrupt welches
+        durch den \textit{MPU6050} ausgelöst wird sobald diesem neue Daten zu
+        Verfügung stehen.
+        Nach dem Aufwachen wird der Code nach \texttt{sleep\_disbale}
+        weiter ausgeführt.
+

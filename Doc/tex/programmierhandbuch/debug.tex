@@ -1,0 +1,11 @@
+\subsection{Debug}
+    Um das Programm zu debuggen wurde ein eigenes Modul entworfen, welches
+    über die \textit{USART} Schnittstelle des \textit{Atmega168} mit einem
+    Computer kommunizieren kann. Damit die Debugausgaben nicht händisch
+    ein- bzw. auskommentiert werden müssen, wurde ein Makro erstellt welches 
+    über das präprozessor Flag \texttt{DEBUG} aktiviert bzw. deaktiviert wird.
+    Dabei kann das Flag modulweise aktiviert werden und damit nur einzelne
+    Module in den Debugmodus versetzt werden. Sollte das \texttt{DEBUG} Flag
+    nicht gesetzt sein, optimiert der Kompilierer den Programmcode raus, sodass
+    keine Performance- sowie Platzeinbußen hingenommen werden müssen.
+    \lstinputlisting[caption=Debug Makro,firstline=30, lastline=38]{../debug.h}

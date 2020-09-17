@@ -1,0 +1,22 @@
+  \subsection{Abschaltverzögerung}
+    Um die Abschaltverzögerung zu realisieren wird der Hardware Timer
+    \textit{Timer0} im CTC-Modus des \textit{Atmega168} benutzt.
+    Dieser soll jede Millisekunde eine \textit{Interrupt Service Routine (ISR)}
+    ausführen die Millisekunden, Sekunden und Stunden verwaltet.
+    \lstinputlisting[caption=Abschaltverzögerung,firstline=40, lastline=56]{../timer.c}
+    Um das Vergleichsregister einzustellen, sodass die
+    \textit{ISR} jede Millisekunde ausgeführt wird, wird folgende Formel
+    benutzt.
+    $$ OCR0A = \frac{CPU_{freq}}{Vorteiler \cdot Timer_{freq}} $$
+    Da die CPU Frequenz bei 1MHz liegt, für den Vorteiler acht gewählt
+    wurde und die gewünschte Timer Frequenz bei 1000Hz liegt, ergibt
+    sich 125 für das vergleichs Register.
+    $$ 125 = \frac{1MHz}{8 \cdot 1Khz} $$
+    Da jedoch keine Millisekunden genaue Auflösung benötigt wird, könnte
+    auch ein anderer Wert für das Vergleichsregister und den Vorteiler
+    gewählt werden, sodass die \textit{ISR} weniger oft ausgeführt wird
+    und somit die CPU Auslastung geringer wird.
+    Beispielsweise würde das Wählen des Vergleichsregisters von 250
+    dazu führen, dass die \textit{ISR} nur noch mit einer Frequenz von
+    500Hz ausgeführt wird. Jedoch müsste dann \texttt{timer\_milliseconds} um zwei
+    inkrementiert werden.

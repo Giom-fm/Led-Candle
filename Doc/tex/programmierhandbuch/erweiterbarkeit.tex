@@ -1,0 +1,11 @@
+\subsection{Erweiterbarkeit}
+    Um das Programm mit neunen Werten zu erweitern, müssen zunächst neue
+    Konstanten in der \textit{config.h} definiert werden (Siehe \ref{config}).
+    Dann muss das Array was die Voreinstellungen hält mit den neuen Werten
+    erweitert werden (Siehe \ref{Datenstrukturen}). 
+    Zusätzich muss die \texttt{SETUP\_MAX\_INDEX} Konstante um die Anzahl an
+    hinzugefügten Werten addiert werden. Hierbei ist jedoch zu erwähnen, dass
+    diese Konstante von allen Arrays verwendet wird.
+    Somit müssen alle Arrays um Werte erweitert werden.
+    Eine zu empfehlende Verbesserung wäre es, für jedes Array eine eigene
+    Konstante anzulegen.
